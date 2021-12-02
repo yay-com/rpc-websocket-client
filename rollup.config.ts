@@ -11,16 +11,19 @@ const libraryName = 'rpc-websocket-client';
 
 export default {
     input: `src/${libraryName}.ts`,
-    output: [{
-        file: pkg.main,
-        name: camelCase(libraryName),
-        format: 'umd',
-        sourcemap: true,
-    }, {
-        file: pkg.module,
-        format: 'es',
-        sourcemap: true,
-    }],
+    output: [
+        {
+            file: pkg.main,
+            name: camelCase(libraryName),
+            format: 'umd',
+            sourcemap: true,
+        },
+        {
+            file: pkg.module,
+            format: 'es',
+            sourcemap: true,
+        },
+    ],
     external: [],
     watch: {
         include: `src/**`,
@@ -34,4 +37,4 @@ export default {
         resolve(),
         sourceMaps(),
     ],
-}
+};

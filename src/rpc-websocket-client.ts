@@ -1,11 +1,10 @@
-import * as IUuid from 'uuid/interfaces';
 import * as IWebSocket from 'isomorphic-ws';
+import { v4 } from 'uuid';
 
-const v1 = require('uuid/v1') as IUuid.v1;
 const WebSocket = require('isomorphic-ws');
 
 export type RpcEventFunction = (
-    e: IWebSocket.OpenEvent | IWebSocket.ErrorEvent
+    e: IWebSocket.Event | IWebSocket.ErrorEvent
 ) => void;
 export type RpcMessageEventFunction = (e: IWebSocket.MessageEvent) => void;
 export type RpcCloseEventFunction = (e: IWebSocket.CloseEvent) => void;
@@ -16,7 +15,7 @@ export type RpcSuccessResponseEvent = (data: IRpcSuccessResponse) => void;
 export type RpcErrorResponseEvent = (data: IRpcErrorResponse) => void;
 
 export enum RpcVersions {
-    RPC_VERSION = '2.0'
+    RPC_VERSION = '2.0',
 }
 
 export type RpcId = string | number;
@@ -85,7 +84,7 @@ export class RpcWebSocketClient {
     public onCloseHandlers: RpcCloseEventFunction[] = [];
 
     public config: IRpcWebSocketConfig = {
-        responseTimeout: 10000
+        responseTimeout: 10000,
     };
 
     // constructor
@@ -195,7 +194,7 @@ export class RpcWebSocketClient {
      * @returns
      * @memberof RpcWebSocketClient
      */
-    public call(method: string, params?: any) {
+    public call<T = any>(method: string, params?: any): Promise<T> {
         return new Promise((resolve, reject) => {
             const data = this.buildRequest(method, params);
 
@@ -287,7 +286,7 @@ export class RpcWebSocketClient {
     // events
     private listen() {
         return new Promise((resolve, reject) => {
-            this.ws.onopen = (e: IWebSocket.OpenEvent) => {
+            this.ws.onopen = (e: IWebSocket.Event) => {
                 for (const handler of this.onOpenHandlers) {
                     handler(e);
                 }
@@ -394,7 +393,7 @@ export class RpcWebSocketClient {
     }
 
     private idFn(): RpcId {
-        return v1();
+        return v4();
     }
 
     // tests
